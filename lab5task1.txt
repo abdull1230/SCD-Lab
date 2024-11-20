@@ -1,0 +1,37 @@
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.preprocessing import LabelEncoder
+
+# Dataset from the table
+data = {
+    "Gender": ["male", "male", "male", "male", "female", "female", "female", "female"],
+    "Height": [6.00, 5.92, 5.58, 5.92, 5.00, 5.50, 5.42, 5.75],
+    "Weight": [180, 190, 170, 165, 100, 150, 130, 150],
+    "Foot_Size": [12, 11, 12, 10, 6, 8, 7, 9],
+}
+
+# Create a DataFrame
+df = pd.DataFrame(data)
+
+# Encode the Gender column (convert categorical data to numeric)
+label_encoder = LabelEncoder()
+df["Gender"] = label_encoder.fit_transform(df["Gender"])  # male: 1, female: 0
+
+# Define features (X) and target (y)
+X = df[["Height", "Weight", "Foot_Size"]]
+y = df["Gender"]
+
+# Train a Decision Tree Classifier
+clf = DecisionTreeClassifier()
+clf.fit(X, y)
+# Predict for a new entry
+def predict_gender(height, weight, foot_size):
+    prediction = clf.predict([[height, weight, foot_size]])
+    predicted_gender = label_encoder.inverse_transform(prediction)  # Convert back to original labels
+    return predicted_gender[0]
+
+# Example: Predict for a new entry (user input)
+new_entry = {"Height": 5.8, "Weight": 160, "Foot_Size": 10}  # Example user input
+predicted_gender = predict_gender(new_entry["Height"], new_entry["Weight"], new_entry["Foot_Size"])
+
+print(f"Predicted Gender for the entry {new_entry}: {predicted_gender}")

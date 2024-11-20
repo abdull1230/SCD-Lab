@@ -1,0 +1,26 @@
+# Weather dataset
+X = [
+    ["Sunny", "Hot"], ["Sunny", "Hot"], ["Overcast", "Hot"],
+    ["Rainy", "Mild"], ["Rainy", "Cool"], ["Rainy", "Cool"],
+    ["Overcast", "Cool"], ["Sunny", "Mild"], ["Sunny", "Cool"],
+    ["Rainy", "Mild"], ["Sunny", "Mild"], ["Overcast", "Mild"],
+    ["Overcast", "Hot"], ["Rainy", "Mild"]
+]
+y = ["No", "No", "Yes", "Yes", "Yes", "No", "Yes", "No", "Yes", "Yes", "Yes", "Yes", "Yes", "No"]
+
+# Encode categorical features
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+X_encoded = [list(le.fit_transform(feature)) for feature in zip(*X)]
+X_encoded = list(zip(*X_encoded))
+
+# Train Decision Tree
+model = DecisionTreeClassifier()
+model.fit(X_encoded, y)
+
+# Prediction for (Overcast, Mild)
+new_data = [[le.transform(["Overcast"])[0], le.transform(["Mild"])[0]]]
+prediction = model.predict(new_data)
+
+# Output
+print("Prediction for (Overcast, Mild):", prediction[0])

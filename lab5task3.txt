@@ -1,0 +1,25 @@
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+# Data from the table
+data = np.array([
+    [6.00, 180, 12, 0],  # male
+    [5.92, 190, 11, 0],  # male
+    [5.58, 170, 12, 0],  # male
+    [5.92, 165, 10, 0],  # male
+    [5.00, 100, 6, 1],   # female
+    [5.50, 150, 8, 1],   # female
+    [5.42, 130, 7, 1],   # female
+    [5.75, 150, 9, 1]    # female
+])
+# Split into features and target
+X = data[:, :-1]  # Features (Height, Weight, Foot_Size)
+y = data[:, -1]   # Target (Gender)
+# Decision Tree Classifier
+clf = DecisionTreeClassifier()
+clf.fit(X, y)
+# Predict a new entry
+new_entry = np.array([[6.0, 160, 10]])  # Example: Height=6.0, Weight=160, Foot_Size=10
+prediction = clf.predict(new_entry)
+# Decode prediction
+predicted_gender = 'male' if prediction[0] == 0 else 'female'
+print("Prediction for the new entry (Height=6.0, Weight=160, Foot_Size=10):", predicted_gender)

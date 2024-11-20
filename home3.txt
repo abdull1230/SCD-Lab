@@ -1,0 +1,40 @@
+# Dataset from Table 1
+weather_data = np.array([
+    ["Sunny", "Hot", "No"],
+    ["Sunny", "Hot", "No"],
+    ["Overcast", "Hot", "Yes"],
+    ["Rainy", "Mild", "Yes"],
+    ["Rainy", "Cool", "Yes"],
+    ["Rainy", "Cool", "No"],
+    ["Overcast", "Cool", "Yes"],
+    ["Sunny", "Mild", "No"],
+    ["Sunny", "Cool", "Yes"],
+    ["Rainy", "Mild", "Yes"],
+    ["Sunny", "Mild", "Yes"],
+    ["Overcast", "Mild", "Yes"],
+    ["Overcast", "Hot", "Yes"],
+    ["Rainy", "Mild", "No"],
+])
+
+# Extract features and labels
+X = weather_data[:, :2]  # Features: Weather, Temperature
+y = weather_data[:, 2]   # Labels: Play
+
+# Encode categorical data manually using numpy
+weather_map = {"Sunny": 0, "Overcast": 1, "Rainy": 2}
+temp_map = {"Hot": 0, "Mild": 1, "Cool": 2}
+play_map = {"No": 0, "Yes": 1}
+
+X_encoded = np.array([[weather_map[weather], temp_map[temp]] for weather, temp in X])
+y_encoded = np.array([play_map[label] for label in y])
+# Train Decision Tree
+model = DecisionTreeClassifier()
+model.fit(X_encoded, y_encoded)
+
+# Predict for new data (Overcast, Mild)
+new_data = np.array([[weather_map["Overcast"], temp_map["Mild"]]])
+prediction = model.predict(new_data)
+
+# Output
+reverse_play_map = {v: k for k, v in play_map.items()}
+print("Prediction for (Overcast, Mild):", reverse_play_map[prediction[0]])

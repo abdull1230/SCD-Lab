@@ -1,0 +1,31 @@
+from sklearn.tree import DecisionTreeClassifier
+import pandas as pd
+# Data from the table
+data = {
+    'Gender': ['male', 'male', 'male', 'male', 'female', 'female', 'female', 'female'],
+    'Height': [6.00, 5.92, 5.58, 5.92, 5.00, 5.50, 5.42, 5.75],
+    'Weight': [180, 190, 170, 165, 100, 150, 130, 150],
+    'Foot_Size': [12, 11, 12, 10, 6, 8, 7, 9]
+}
+# Convert Gender to numeric
+gender_map = {'male': 0, 'female': 1}
+df = pd.DataFrame(data)
+df['Gender'] = df['Gender'].map(gender_map)
+# Features and target
+X = df[['Height', 'Weight', 'Foot_Size']]
+y = df['Gender']
+# Decision Tree Classifier
+clf = DecisionTreeClassifier()
+clf.fit(X, y)
+# Predict a new entry
+new_entry = [[6.0, 160, 10]]  # Example: Height=6.0, Weight=160, Foot_Size=10
+prediction = clf.predict(new_entry)
+# Add new entry to the dataset
+new_data = {'Gender': prediction[0], 'Height': 6.0, 'Weight': 160, 'Foot_Size': 10}
+df = df.append(new_data, ignore_index=True)
+# Retrain the model with updated data
+X = df[['Height', 'Weight', 'Foot_Size']]
+y = df['Gender']
+clf.fit(X, y)
+print("Updated dataset:")
+print(df)
