@@ -1,0 +1,102 @@
+package com.Lab7;
+
+public class BankAccount {
+    private double balance;
+
+    public BankAccount(double initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    // Synchronized deposit method to ensure thread-safety
+    public synchronized void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println(Thread.currentThread().getName() + " deposited " + amount + ". New balance: " + balance);
+        }
+    }
+
+    // Synchronized withdraw method to ensure thread-safety
+    public synchronized void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            System.out.println(Thread.currentThread().getName() + " withdrew " + amount + ". New balance: " + balance);
+        } else {
+            System.out.println(Thread.currentThread().getName() + " failed to withdraw " + amount + ". Insufficient funds.");
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+}
+
+
+
+
+
+package com.Lab7;
+
+public class Transactio implements Runnable {
+    private BankAccount account;
+    private double amount;
+    private String type; // Deposit or Withdraw
+
+    public Transactio(BankAccount account, double amount, String type) {
+        this.account = account;
+        this.amount = amount;
+        this.type = type;
+    }
+
+    @Override
+    public void run() {
+        try {
+            // Simulate random transaction time
+            Thread.sleep(1000);
+            
+            if (type.equals("deposit")) {
+                account.deposit(amount);
+            } else if (type.equals("withdraw")) {
+                account.withdraw(amount);
+            }
+        } catch (InterruptedException e) {
+            System.out.println("Transaction interrupted.");
+        }
+    }
+}
+
+
+
+
+package com.Lab7;
+public class BankSystem {
+
+    public static void main(String[] args) {
+        // Create a BankAccount with an initial balance of 1000
+        BankAccount account = new BankAccount(1000);
+
+        // Create transaction threads (for both deposit and withdrawal)
+        Thread t1 = new Thread(new Transactio(account, 500, "deposit"));
+        Thread t2 = new Thread(new Transactio(account, 300, "withdraw"));
+        Thread t3 = new Thread(new Transactio(account, 700, "withdraw"));
+        Thread t4 = new Thread(new Transactio(account, 1000, "deposit"));
+
+        // Start threads
+        t1.start();
+        t2.start();
+        t3.start();
+        t4.start();
+        
+        // Wait for threads to finish
+        try {
+            t1.join();
+            t2.join();
+            t3.join();
+            t4.join();
+        } catch (InterruptedException e) {
+            System.out.println("Main thread interrupted.");
+        }
+
+        // Display final balance
+        System.out.println("Final account balance: " + account.getBalance());
+    }
+}
