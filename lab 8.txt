@@ -1,0 +1,90 @@
+import java.util.concurrent.locks.Lock;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+
+class DeadlockExample {
+
+private static final Lock lock1 = new ReentrantLock();
+
+private static final Lock lock2 = new ReentrantLock();
+
+private static final Lock lock3 = new ReentrantLock();
+
+
+public static void main(String[] args) {
+
+Thread thread1 = new Thread(new Task(lock1, lock2), "Thread 1");
+
+Thread thread2 = new Thread(new Task(lock2, lock3), "Thread 2");
+
+Thread thread3 = new Thread(new Task(lock3, lock1), "Thread 3");
+
+
+thread1.start();
+
+thread2.start();
+
+thread3.start();
+
+}
+
+}
+
+
+class Task implements Runnable {
+
+private final Lock lockA;
+
+private final Lock lockB;
+
+
+public Task(Lock lockA, Lock lockB) {
+
+this.lockA = lockA;
+
+this.lockB = lockB;
+
+}
+@Override
+
+public void run() {
+
+try {
+
+// Attempt to acquire lock A
+
+lockA.lock();
+
+System.out.println(Thread.currentThread().getName() + " acquired " + lockA);
+
+
+// Simulate some work with the first lock
+
+Thread.sleep(100);
+
+
+// Attempt to acquire lock B
+
+lockB.lock();
+
+System.out.println(Thread.currentThread().getName() + " acquired " + lockB);
+
+} catch (InterruptedException e) {
+
+Thread.currentThread().interrupt();
+
+} finally {
+
+// Always ensure locks are released
+
+lockB.unlock();
+
+lockA.unlock();
+
+}
+
+}
+
+}
+
